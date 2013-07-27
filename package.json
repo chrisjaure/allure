@@ -1,0 +1,26 @@
+{
+  "name": "allure",
+  "version": "0.0.0",
+  "description": "Interactive UI pattern framework.",
+  "homepage": "https://github.com/chrisjaure/allure",
+  "bugs": "https://github.com/chrisjaure/allure/issues",
+  "author": {
+    "name": "Chris Jaure",
+    "email": "chrisjaure@gmail.com",
+    "url": "http://cleverchris.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisjaure/allure"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-watch": "~0.5.0"
+  }
+}
