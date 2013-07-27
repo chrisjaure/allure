@@ -21,11 +21,14 @@
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
     "grunt-contrib-watch": "~0.5.0",
-    "grunt-jasmine-node": "~0.1.0"
+    "grunt-jasmine-node": "~0.1.0",
   },
   "dependencies": {
     "optimist": "~0.6.0",
     "mdconf": "0.0.2",
-    "glob": "~3.2.6"
+    "glob": "~3.2.6",
+    "express": "~3.3.4",
+    "dotty": "0.0.2"
+    "async": "~0.2.9"
   }
 }

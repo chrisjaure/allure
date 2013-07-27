@@ -2,5 +2,19 @@ Component
 =========
 - type: common
 
-## JS
+## Assets
+
+### JS
 - test.js
+
+### CSS
+- test.css
+
+## Angular
+- 'test'
+
+## Style
+
+## Script
+
+## Markup
