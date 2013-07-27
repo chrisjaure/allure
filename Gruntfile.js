@@ -4,8 +4,9 @@ module.exports = function (grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    nodeunit: {
-      files: ['test/**/*_test.js']
+    jasmine_node: {
+      projectRoot: 'test',
+      specNameMatcher: '.spec'
     },
     jshint: {
       options: {
@@ -14,11 +15,11 @@ module.exports = function (grunt) {
       gruntfile: {
         src: 'Gruntfile.js'
       },
-      lib: {
-        src: ['lib/**/*.js']
+      src: {
+        src: ['src/**/*.js']
       },
       test: {
-        src: ['test/**/*.js']
+        src: ['test/*.js']
       }
     },
     watch: {
@@ -26,23 +27,23 @@ module.exports = function (grunt) {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
       },
-      lib: {
-        files: '<%= jshint.lib.src %>',
-        tasks: ['jshint:lib', 'nodeunit']
+      src: {
+        files: '<%= jshint.src.src %>',
+        tasks: ['jasmine_node']
       },
       test: {
         files: '<%= jshint.test.src %>',
-        tasks: ['jshint:test', 'nodeunit']
+        tasks: ['jshint:test', 'jasmine_node']
       }
     }
   });
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-jasmine-node');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'nodeunit']);
+  grunt.registerTask('default', ['jshint', 'jasmine_node']);
 
 };

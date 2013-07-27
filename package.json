@@ -1,6 +1,6 @@
 {
   "name": "allure",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Interactive UI pattern framework.",
   "homepage": "https://github.com/chrisjaure/allure",
   "bugs": "https://github.com/chrisjaure/allure/issues",
@@ -20,7 +20,12 @@
   ],
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
-    "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-contrib-watch": "~0.5.0"
+    "grunt-contrib-watch": "~0.5.0",
+    "grunt-jasmine-node": "~0.1.0"
+  },
+  "dependencies": {
+    "optimist": "~0.6.0",
+    "mdconf": "0.0.2",
+    "glob": "~3.2.6"
   }
 }
