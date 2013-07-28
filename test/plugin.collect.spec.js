@@ -2,7 +2,7 @@
 
 var collect = require('../src/plugins/collect');
 
-describe('collect', function() {
+describe('plugin.collect', function() {
 
 	var fileConf, context;
 
