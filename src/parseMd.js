@@ -4,8 +4,12 @@ var mdconf = require('mdconf');
 
 module.exports = function parseMd (path) {
 
-	var files = glob.sync(path),
+	var files = path,
 		fileConfs = [];
+
+	if (!Array.isArray(path)) {
+		files = glob.sync(path);
+	}
 
 	files.forEach(function(filePath) {
 		var md = fs.readFileSync(filePath).toString('utf8'),

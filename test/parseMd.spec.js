@@ -9,8 +9,13 @@ describe('parseMd', function () {
 		expect(result).toEqual(jasmine.any(Array));
 	});
 
-	it('should set a title', function () {
+	it('should set a title', function() {
 		var result = parseMd(__dirname + '/fixture/basic.md');
+		expect(result[0].title).toEqual('component');
+	});
+
+	it('should accept an array of files', function() {
+		var result = parseMd([__dirname + '/fixture/basic.md']);
 		expect(result[0].title).toEqual('component');
 	});
 
