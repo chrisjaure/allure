@@ -29,16 +29,16 @@
 			{% if component.script or component.markup or component.style %}
 			<div class="component-code">
 
-				{% if component.script %}
-					{% for script in component.script %}
-						<p class="component-code-label">javascript</p>
-						<pre><code class="language-javascript">{{ script | escape }}</code></pre>
-					{% endfor %}
-				{% endif %}
 				{% if component.style %}
 					{% for style in component.style %}
 						<p class="component-code-label">css</p>
 						<pre><code class="language-scss">{{ style | escape }}</code></pre>
+					{% endfor %}
+				{% endif %}
+				{% if component.script %}
+					{% for script in component.script %}
+						<p class="component-code-label">javascript</p>
+						<pre><code class="language-javascript">{{ script | escape }}</code></pre>
 					{% endfor %}
 				{% endif %}
 				{% if component.markup %}
@@ -51,6 +51,11 @@
 			{% endif %}
 
 			<div class="component-example">
+				{% if component.style %}
+					<style scoped>
+						{{ component.style }}
+					</style>
+				{% endif %}
 				{% if component.script %}
 					<script type="text/javascript">
 						{{ component.script }}

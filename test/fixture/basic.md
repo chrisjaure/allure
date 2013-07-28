@@ -15,7 +15,7 @@ Component
 
 ## Style
 
-	body {
+	p {
 		color: blue;
 	}
 
