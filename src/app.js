@@ -1,13 +1,15 @@
+var fs = require('fs');
 var http = require('http');
 var path = require('path');
 var dotty = require('dotty');
 var async = require('async');
+var nunjucks = require('nunjucks');
 var express = require('express');
 var parseMd = require('./parseMd');
 
 module.exports = function allure (server) {
 
-	var plugins = [], settings = {}, app;
+	var plugins = [], settings = {}, app, conf;
 
 	if (!server) {
 		server = http.createServer();
@@ -17,8 +19,14 @@ module.exports = function allure (server) {
 
 	this.use = function(prop, plugin) {
 		if (!plugin) {
-			plugin = prop;
-			prop = null;
+			if (Array.isArray(prop)) {
+				plugin = prop[1];
+				prop = prop[0];
+			}
+			else {
+				plugin = prop;
+				prop = null;
+			}
 		}
 
 		plugins.push({
@@ -30,7 +38,7 @@ module.exports = function allure (server) {
 	};
 
 	this.config = function(name, value) {
-		if (arguments.length == 2) {
+		if (arguments.length === 2) {
 			settings[name] = value;
 			return this;
 		}
@@ -40,16 +48,26 @@ module.exports = function allure (server) {
 
 	this.listen = function() {
 		var args = arguments;
-		this.init(function() {
+		this.getData(function(err, data) {
+			if (err) {
+				throw err;
+			}
+
+			var template = this.config('template'),
+				renderer = this.config('renderer');
+
+			conf = data;
+			app.get('/', function(req, res) {
+				res.send(renderer(template, conf));
+			});
 			server.on('request', app);
 			server.listen.apply(server, args);
 		});
 		return app;
 	};
 
-	this.init = function(cb) {
+	this.getData = function(cb) {
 		var path = this.config('src'),
-			template = this.config('template'),
 			fileConfs = parseMd(path),
 			globalConf = {
 				components: []
@@ -64,16 +82,19 @@ module.exports = function allure (server) {
 		async.eachSeries(fileConfs, function(fileConf, done) {
 			applyPlugins(plugins, this, fileConf, globalConf, done);
 		}, function(err) {
-			app.get('/', function(req, res) {
-				res.end(globalConf);
-			});
 			cb(err, globalConf);
 		});
 	};
 
 	// defaults
 	this.config('src', path.join(process.cwd(), '**', '*.md'));
-	this.config('template', path.join(__dirname, 'index.html'));
+	this.config('template', fs.readFileSync(path.join(__dirname, 'public', 'index.html')));
+	this.config('renderer', function renderTpl(template, data) {
+		if (!renderTpl.tpl) {
+			renderTpl.tpl = new nunjucks.Template(template);
+		}
+		return renderTpl.tpl.render(data);
+	});
 	this.config('assets', []);
 
 	return this;
