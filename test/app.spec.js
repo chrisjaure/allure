@@ -16,6 +16,12 @@ describe('app', function() {
 			expect(app.config('test')).toEqual('test1');
 			expect(app.config('test2').blah).toEqual('test2');
 		});
+		it('should allow chaining', function() {
+			var app = allureApp()
+				.config('test', 'test1')
+				.config('test2.blah', 'test2');
+			expect(app.config('test2').blah).toEqual('test2');
+		});
 	});
 
 	describe('.locals', function() {
@@ -26,23 +32,74 @@ describe('app', function() {
 			expect(app.locals('test')).toEqual('test1');
 			expect(app.locals('test2').blah).toEqual('test2');
 		});
-	});
-
-	describe('.plugin.before', function() {
-		it('should provide a shortcut for appending items to the plugin.before local', function() {
-			var app = allureApp();
-			app.plugin.before('test');
-			app.plugin.before('test2');
-			expect(app.locals('plugin').before).toEqual(['test', 'test2']);
+		it('should allow chaining', function() {
+			var app = allureApp()
+				.locals('test', 'test1')
+				.locals('test2.blah', 'test2');
+			expect(app.locals('test2').blah).toEqual('test2');
 		});
 	});
 
-	describe('.plugin.after', function() {
-		it('should provide a shortcut for appending items to the plugin.after local', function() {
-			var app = allureApp();
-			app.plugin.after('test');
-			app.plugin.after('test2');
-			expect(app.locals('plugin').after).toEqual(['test', 'test2']);
+	describe('.plugin', function() {
+		describe('.config', function() {
+			it('should set and get values', function() {
+				var app = allureApp();
+				app.plugin.config('test', 'test1');
+				app.plugin.config('test2.blah', 'test2');
+				expect(app.config('test')).toEqual('test1');
+				expect(app.config('test2').blah).toEqual('test2');
+			});
+			it('should allow chaining', function() {
+				var app = allureApp();
+				app.plugin
+					.config('test', 'test1')
+					.config('test2.blah', 'test2');
+				expect(app.config('test2').blah).toEqual('test2');
+			});
+		});
+
+		describe('.locals', function() {
+			it('should set and get values', function() {
+				var app = allureApp();
+				app.plugin.locals('test', 'test1');
+				app.plugin.locals('test2.blah', 'test2');
+				expect(app.locals('test')).toEqual('test1');
+				expect(app.locals('test2').blah).toEqual('test2');
+			});
+			it('should allow chaining', function() {
+				var app = allureApp();
+				app.plugin
+					.locals('test', 'test1')
+					.locals('test2.blah', 'test2');
+				expect(app.locals('test2').blah).toEqual('test2');
+			});
+		});
+		describe('.before', function() {
+			it('should provide a shortcut for appending items to the plugin.before local', function() {
+				var app = allureApp();
+				app.plugin.before('test');
+				app.plugin.before('test2');
+				expect(app.locals('plugin').before).toEqual(['test', 'test2']);
+			});
+			it('should allow chaining', function() {
+				var app = allureApp();
+				app.plugin.before('test').before('test2');
+				expect(app.locals('plugin').before).toEqual(['test', 'test2']);
+			});
+		});
+
+		describe('.after', function() {
+			it('should provide a shortcut for appending items to the plugin.after local', function() {
+				var app = allureApp();
+				app.plugin.after('test');
+				app.plugin.after('test2');
+				expect(app.locals('plugin').after).toEqual(['test', 'test2']);
+			});
+			it('should allow chaining', function() {
+				var app = allureApp();
+				app.plugin.after('test').after('test2');
+				expect(app.locals('plugin').after).toEqual(['test', 'test2']);
+			});
 		});
 	});
 
@@ -79,6 +136,17 @@ describe('app', function() {
 				done();
 			});
 		});
+		it('should allow chaining', function(done) {
+			var app = allureApp();
+			var plugin = jasmine.createSpy('plugin');
+			var plugin2 = jasmine.createSpy('plugin2');
+			app.config('src', mdpath);
+			app.use(plugin).use(plugin2);
+			app.getData(function() {
+				expect(plugin2).toHaveBeenCalled();
+				done();
+			});
+		});
 	});
 
 	describe('.getData', function() {
@@ -103,10 +171,8 @@ describe('app', function() {
 			app.config('src', mdpath);
 			app.use(function() {
 				expect(this).toBe(app.plugin);
-				this.locals('test', 'test');
 			});
 			app.getData(function() {
-				expect(app.locals('test')).toEqual('test');
 				done();
 			});
 		});

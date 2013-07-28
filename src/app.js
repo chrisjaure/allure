@@ -40,12 +40,11 @@ module.exports = function allure (server) {
 
 	this.config = setterGetter(this, settings);
 	this.locals = setterGetter(this, locals);
-	this.plugin = {
-		before: appender(this.locals, 'plugin.before'),
-		after: appender(this.locals, 'plugin.after'),
-		config: this.config,
-		locals: this.locals
-	};
+	this.plugin = {};
+	this.plugin.config = setterGetter(this.plugin, settings);
+	this.plugin.locals = setterGetter(this.plugin, locals);
+	this.plugin.before = appender(this.plugin.locals, 'plugin.before');
+	this.plugin.after = appender(this.plugin.locals, 'plugin.after');
 
 	this.listen = function() {
 		var args = arguments;
@@ -123,7 +122,7 @@ function appender (fn, local) {
 		if (!Array.isArray(val)) {
 			val = [val];
 		}
-		fn(local, arr.concat(val));
+		return fn(local, arr.concat(val));
 	};
 }
 
