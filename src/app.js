@@ -78,7 +78,7 @@ module.exports = function allure (server) {
 		this.config('assets').forEach(function(asset) {
 			app.use(asset.dest, express.static(asset.src));
 		});
-		app.use('/allure', express.static(path.join(__dirname, 'src', 'public')));
+		app.use('/allure', express.static(path.join(__dirname, 'public')));
 
 		async.eachSeries(fileConfs, function(fileConf, done) {
 			applyPlugins(plugins, this, fileConf, globalConf, done);
