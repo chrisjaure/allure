@@ -1,14 +1,16 @@
 var dotty = require('dotty');
 
-module.exports = function(qualifier, globalProp) {
+module.exports = function(qualifier, local) {
 
-	var collect = function (fileConfig, globalConfig) {
+	var collect = function (fileConfig) {
 
-		if (!globalConfig[globalProp]) {
-			globalConfig[globalProp] = [];
+		var arr = this.locals(local);
+
+		if (!arr) {
+			arr = [];
 		}
 
-		globalConfig[globalProp] = globalConfig[globalProp].concat(dotty.get(fileConfig, qualifier));
+		this.locals(local, arr.concat(dotty.get(fileConfig, qualifier)));
 
 	};
 

@@ -16,17 +16,22 @@ describe('app', function() {
 		});
 	});
 
+	describe('.locals', function() {
+		it('should set and get values', function() {
+			var app = allureApp();
+			app.config('test', 'test1');
+			expect(app.config('test')).toEqual('test1');
+		});
+	});
+
 	describe('.use', function() {
 		it('should add plugins', function(done) {
 			var app = allureApp();
+			var plugin = jasmine.createSpy('plugin');
 			app.config('src', mdpath);
-			app.use(function(fc, gc) {
-				gc.test = 'test';
-				fc.test = 'test';
-			});
-			app.getData(function(err, config) {
-				expect(config.components[0].test).toEqual('test');
-				expect(config.test).toEqual('test');
+			app.use(plugin);
+			app.getData(function() {
+				expect(plugin).toHaveBeenCalled();
 				done();
 			});
 		});
@@ -55,20 +60,19 @@ describe('app', function() {
 	});
 
 	describe('.getData', function() {
-		it('should callback with an object that contains a component array', function(done) {
+		it('should callback with a component array', function(done) {
 			var app = allureApp();
 			app.config('src', mdpath);
-			app.getData(function(err, config) {
-				expect(config).toEqual(jasmine.any(Object));
-				expect(config.components).toEqual(jasmine.any(Array));
+			app.getData(function(err, components) {
+				expect(components).toEqual(jasmine.any(Array));
 				done();
 			});
 		});
 		it('should use the provided src setting', function(done) {
 			var app = allureApp();
 			app.config('src', __dirname + '/fixture/basic.md');
-			app.getData(function(err, config) {
-				expect(config.components[0].title).toEqual('component');
+			app.getData(function(err, components) {
+				expect(components[0].title).toEqual('component');
 				done();
 			});
 		});
@@ -112,6 +116,31 @@ describe('app', function() {
 					}
 					expect(res.statusCode).toEqual(200);
 					expect(res.body).toEqual('<p>component</p>');
+					app.server.close();
+					done();
+				});
+			});
+		});
+		it('should provide template and locals to renderer', function(done) {
+			var app = allureApp();
+			var renderer = jasmine.createSpy('renderer');
+			var template = '<p></p>';
+			app.config('src', __dirname + '/fixture/minimal.md');
+			app.config('template', template);
+			app.config('renderer', renderer);
+			app.locals('test', 'test');
+			app.listen(8000, function(err) {
+				if (err) {
+					throw err;
+				}
+				request('http://localhost:8000', function(err) {
+					if (err) {
+						throw err;
+					}
+					expect(renderer).toHaveBeenCalledWith(
+						template,
+						{ components: [{title: 'title', prop: 'val'}], test: 'test', before: [], after: [] }
+					);
 					app.server.close();
 					done();
 				});

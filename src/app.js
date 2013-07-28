@@ -5,11 +5,12 @@ var dotty = require('dotty');
 var async = require('async');
 var nunjucks = require('nunjucks');
 var express = require('express');
+var extend = require('extend');
 var parseMd = require('./parseMd');
 
 module.exports = function allure (server) {
 
-	var plugins = [], settings = {}, app, conf;
+	var plugins = [], settings = {}, locals = {}, app;
 
 	if (!server) {
 		server = http.createServer();
@@ -37,18 +38,14 @@ module.exports = function allure (server) {
 		return this;
 	};
 
-	this.config = function(name, value) {
-		if (arguments.length === 2) {
-			settings[name] = value;
-			return this;
-		}
+	this.config = setterGetter(settings);
 
-		return settings[name];
-	};
+	this.locals = setterGetter(locals);
+
 
 	this.listen = function() {
 		var args = arguments;
-		this.getData(function(err, data) {
+		this.getData(function(err, components) {
 			if (err) {
 				throw err;
 			}
@@ -56,9 +53,11 @@ module.exports = function allure (server) {
 			var template = this.config('template'),
 				renderer = this.config('renderer');
 
-			conf = data;
 			app.get('/', function(req, res) {
-				res.send(renderer(template, conf));
+				var data = extend({
+					components: components
+				}, locals);
+				res.send(renderer(template, data));
 			});
 			server.on('request', app);
 			server.listen.apply(server, args);
@@ -69,9 +68,7 @@ module.exports = function allure (server) {
 	this.getData = function(cb) {
 		var src = this.config('src'),
 			fileConfs = parseMd(src),
-			globalConf = {
-				components: []
-			};
+			components = [];
 
 		cb = cb || function(){};
 
@@ -81,9 +78,12 @@ module.exports = function allure (server) {
 		app.use('/allure', express.static(path.join(__dirname, 'public')));
 
 		async.eachSeries(fileConfs, function(fileConf, done) {
-			applyPlugins(plugins, this, fileConf, globalConf, done);
+			applyPlugins(plugins, this, fileConf, function(err, component) {
+				components.push(component);
+				done(err);
+			});
 		}, function(err) {
-			cb(err, globalConf);
+			cb(err, components);
 		});
 	};
 
@@ -100,12 +100,25 @@ module.exports = function allure (server) {
 		return renderTpl.tpl.render(data);
 	});
 	this.config('assets', []);
+	this.locals('before', []);
+	this.locals('after', []);
 
 	return this;
 
 };
 
-function applyPlugins (plugins, context, fileConf, globalConf, cb) {
+function setterGetter (obj) {
+	return function(name, value) {
+		if (arguments.length === 2) {
+			obj[name] = value;
+			return this;
+		}
+
+		return obj[name];
+	};
+}
+
+function applyPlugins (plugins, context, fileConf, cb) {
 	async.eachSeries(plugins, function(plugin, done) {
 		var error, match = true;
 
@@ -118,11 +131,11 @@ function applyPlugins (plugins, context, fileConf, globalConf, cb) {
 		}
 
 		if (plugin.fn.length === 3) {
-			plugin.fn.call(context, fileConf, globalConf, done);
+			plugin.fn.call(context, fileConf, done);
 		}
 		else {
 			try {
-				plugin.fn.call(context, fileConf, globalConf);
+				plugin.fn.call(context, fileConf);
 			}
 			catch (err) {
 				error = err;
@@ -131,8 +144,7 @@ function applyPlugins (plugins, context, fileConf, globalConf, cb) {
 		}
 
 	}, function(err) {
-		globalConf.components.push(fileConf);
-		cb(err);
+		cb(err, fileConf);
 	});
 
 }

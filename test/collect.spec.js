@@ -4,7 +4,7 @@ var collect = require('../src/plugins/collect');
 
 describe('collect', function() {
 
-	var fileConf, globalConf;
+	var fileConf, context;
 
 	beforeEach(function() {
 		fileConf = {
@@ -12,7 +12,10 @@ describe('collect', function() {
 				property: ['value']
 			}
 		};
-		globalConf = {};
+
+		context = {
+			locals: jasmine.createSpy('locals')
+		};
 	});
 
 	it('should return the plugin array signature', function() {
@@ -20,17 +23,12 @@ describe('collect', function() {
 		expect(arr).toEqual(jasmine.any(Array));
 		expect(arr[0]).toEqual('nested.property');
 		expect(arr[1]).toEqual(jasmine.any(Function));
-		expect(arr[1].length).toEqual(2);
+		expect(arr[1].length).toEqual(1);
 	});
 
-	it('should set an array on globalConf', function() {
-		collect('', 'collection')[1](fileConf, globalConf);
-		expect(globalConf.collection).toEqual(jasmine.any(Array));
-	});
-
-	it('should concat collection with all matches', function() {
-		collect('nested.property', 'prop')[1](fileConf, globalConf);
-		expect(globalConf.prop).toEqual(['value']);
+	it('should concat collection with matches', function() {
+		collect('nested.property', 'prop')[1].call(context, fileConf);
+		expect(context.locals).toHaveBeenCalledWith('prop', fileConf.nested.property);
 	});
 
 });
