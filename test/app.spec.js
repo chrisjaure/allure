@@ -216,6 +216,25 @@ describe('app', function() {
 				done();
 			});
 		});
+		it('should expect plugins with an arity of 2 to be asynchronous', function() {
+			var app = allureApp();
+			var plugin = function(conf, cb) {
+				setTimeout(function() {
+					cb();
+				}, 50);
+			};
+			var complete = jasmine.createSpy('complete');
+			app.config('src', mdpath);
+			app.use(plugin);
+
+			jasmine.Clock.useMock();
+
+			app.getData(complete);
+
+			expect(complete).not.toHaveBeenCalled();
+			jasmine.Clock.tick(51);
+			expect(complete).toHaveBeenCalled();
+		});
 	});
 
 	describe('.listen', function() {

@@ -149,7 +149,7 @@ function applyPlugins (plugins, context, fileConf, matchOnly, cb) {
 			return done();
 		}
 
-		if (plugin.fn.length === 3) {
+		if (plugin.fn.length === 2) {
 			plugin.fn.call(context, fileConf, done);
 		}
 		else {
