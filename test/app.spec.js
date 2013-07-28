@@ -12,15 +12,37 @@ describe('app', function() {
 		it('should set and get values', function() {
 			var app = allureApp();
 			app.config('test', 'test1');
+			app.config('test2.blah', 'test2');
 			expect(app.config('test')).toEqual('test1');
+			expect(app.config('test2').blah).toEqual('test2');
 		});
 	});
 
 	describe('.locals', function() {
 		it('should set and get values', function() {
 			var app = allureApp();
-			app.config('test', 'test1');
-			expect(app.config('test')).toEqual('test1');
+			app.locals('test', 'test1');
+			app.locals('test2.blah', 'test2');
+			expect(app.locals('test')).toEqual('test1');
+			expect(app.locals('test2').blah).toEqual('test2');
+		});
+	});
+
+	describe('.plugin.before', function() {
+		it('should provide a shortcut for appending items to the plugin.before local', function() {
+			var app = allureApp();
+			app.plugin.before('test');
+			app.plugin.before('test2');
+			expect(app.locals('plugin').before).toEqual(['test', 'test2']);
+		});
+	});
+
+	describe('.plugin.after', function() {
+		it('should provide a shortcut for appending items to the plugin.after local', function() {
+			var app = allureApp();
+			app.plugin.after('test');
+			app.plugin.after('test2');
+			expect(app.locals('plugin').after).toEqual(['test', 'test2']);
 		});
 	});
 
@@ -35,7 +57,7 @@ describe('app', function() {
 				done();
 			});
 		});
-		it('should optionally accept a qualifier as a first argument', function(done) {
+		it('should accept a qualifier as a first argument', function(done) {
 			var app = allureApp();
 			var plugin = jasmine.createSpy('plugin');
 			app.config('src', __dirname + '/fixture/basic.md');
@@ -46,7 +68,7 @@ describe('app', function() {
 				done();
 			});
 		});
-		it('should optionally accept an array with a qualifier', function(done) {
+		it('should accept an array with a qualifier', function(done) {
 			var app = allureApp();
 			var plugin = jasmine.createSpy('plugin');
 			app.config('src', __dirname + '/fixture/basic.md');
@@ -76,13 +98,55 @@ describe('app', function() {
 				done();
 			});
 		});
-		it('should call plugins with allureApp as context', function(done) {
+		it('should call plugins with app.plugin as context', function(done) {
 			var app = allureApp();
 			app.config('src', mdpath);
 			app.use(function() {
-				expect(this).toBe(app);
+				expect(this).toBe(app.plugin);
+				this.locals('test', 'test');
 			});
 			app.getData(function() {
+				expect(app.locals('test')).toEqual('test');
+				done();
+			});
+		});
+		it('should run plugins with qualifiers on every md conf', function(done) {
+			var app = allureApp();
+			var plugin = jasmine.createSpy('plugin');
+			app.config('src', mdpath);
+			app.use('title', plugin);
+			app.getData(function() {
+				expect(plugin.callCount).toBeGreaterThan(1);
+				done();
+			});
+		});
+		it('should pass an object to such plugins', function(done) {
+			var app = allureApp();
+			var plugin = jasmine.createSpy('plugin');
+			app.config('src', mdpath);
+			app.use('title', plugin);
+			app.getData(function() {
+				expect(plugin).toHaveBeenCalledWith(jasmine.any(Object));
+				done();
+			});
+		});
+		it('should run a plugin that has no qualifier only once', function(done) {
+			var app = allureApp();
+			var plugin = jasmine.createSpy('plugin');
+			app.config('src', mdpath);
+			app.use(plugin);
+			app.getData(function() {
+				expect(plugin.callCount).toEqual(1);
+				done();
+			});
+		});
+		it('should pass an array of components to such plugins', function(done) {
+			var app = allureApp();
+			var plugin = jasmine.createSpy('plugin');
+			app.config('src', mdpath);
+			app.use(plugin);
+			app.getData(function() {
+				expect(plugin).toHaveBeenCalledWith(jasmine.any(Array));
 				done();
 			});
 		});
@@ -139,7 +203,7 @@ describe('app', function() {
 					}
 					expect(renderer).toHaveBeenCalledWith(
 						template,
-						{ components: [{title: 'title', prop: 'val'}], test: 'test', before: [], after: [] }
+						{ components: [{title: 'title', prop: 'val'}], test: 'test' }
 					);
 					app.server.close();
 					done();

@@ -8,7 +8,7 @@
 			{{ styles }}
 		</style>
 	{% endif %}
-	{% for inject in before %}
+	{% for inject in plugin.before %}
 		{{ inject }}
 	{% endfor %}
 </head>
@@ -62,7 +62,7 @@
 		</div>
 	{% endfor %}
 	<script src="/allure/prism.js" type="text/javascript"></script>
-	{% for inject in after %}
+	{% for inject in plugin.after %}
 		{{ inject }}
 	{% endfor %}
 </body>

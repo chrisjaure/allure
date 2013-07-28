@@ -38,10 +38,14 @@ module.exports = function allure (server) {
 		return this;
 	};
 
-	this.config = setterGetter(settings);
-
-	this.locals = setterGetter(locals);
-
+	this.config = setterGetter(this, settings);
+	this.locals = setterGetter(this, locals);
+	this.plugin = {
+		before: appender(this.locals, 'plugin.before'),
+		after: appender(this.locals, 'plugin.after'),
+		config: this.config,
+		locals: this.locals
+	};
 
 	this.listen = function() {
 		var args = arguments;
@@ -78,12 +82,17 @@ module.exports = function allure (server) {
 		app.use('/allure', express.static(path.join(__dirname, 'public')));
 
 		async.eachSeries(fileConfs, function(fileConf, done) {
-			applyPlugins(plugins, this, fileConf, function(err, component) {
+			applyPlugins(plugins, this.plugin, fileConf, true, function(err, component) {
 				components.push(component);
 				done(err);
 			});
 		}, function(err) {
-			cb(err, components);
+			if (err) {
+				return cb(err);
+			}
+			applyPlugins(plugins, this.plugin, components, false, function(err) {
+				cb(err, components);
+			});
 		});
 	};
 
@@ -100,25 +109,36 @@ module.exports = function allure (server) {
 		return renderTpl.tpl.render(data);
 	});
 	this.config('assets', []);
-	this.locals('before', []);
-	this.locals('after', []);
 
 	return this;
 
 };
 
-function setterGetter (obj) {
-	return function(name, value) {
-		if (arguments.length === 2) {
-			obj[name] = value;
-			return this;
+function appender (fn, local) {
+	return function(val) {
+		var arr = fn(local);
+		if (!arr) {
+			arr = [];
 		}
-
-		return obj[name];
+		if (!Array.isArray(val)) {
+			val = [val];
+		}
+		fn(local, arr.concat(val));
 	};
 }
 
-function applyPlugins (plugins, context, fileConf, cb) {
+function setterGetter (context, obj) {
+	return function(name, value) {
+		if (arguments.length === 2) {
+			dotty.put(obj, name, value);
+			return context;
+		}
+
+		return dotty.get(obj, name);
+	};
+}
+
+function applyPlugins (plugins, context, fileConf, matchOnly, cb) {
 	async.eachSeries(plugins, function(plugin, done) {
 		var error, match = true;
 
@@ -126,7 +146,7 @@ function applyPlugins (plugins, context, fileConf, cb) {
 			match = (dotty.exists(fileConf, plugin.match));
 		}
 
-		if (!match) {
+		if (!match || (plugin.match == null && matchOnly)) {
 			return done();
 		}
 
