@@ -15,8 +15,7 @@ module.exports = function allure (server) {
 	if (!server) {
 		server = http.createServer();
 	}
-	this.server = server;
-	app = this.app = express();
+	app = this.express = express();
 
 	this.use = function(prop, plugin) {
 		if (!plugin) {
@@ -47,10 +46,19 @@ module.exports = function allure (server) {
 	this.plugin.after = appender(this.plugin.locals, 'plugin.after');
 
 	this.listen = function() {
-		var args = arguments;
-		this.getData(function(err, components) {
-			if (err) {
+		var args = arguments,
+			cb = args[args.length - 1];
+
+		if (typeof cb !== 'function') {
+			cb = function(err) {
 				throw err;
+			};
+		}
+
+		this.getData(function(err, components) {
+
+			if (err) {
+				return cb(err);
 			}
 
 			var template = this.config('template'),
@@ -65,13 +73,20 @@ module.exports = function allure (server) {
 			server.on('request', app);
 			server.listen.apply(server, args);
 		});
-		return app;
+		return server;
 	};
 
 	this.getData = function(cb) {
 		var src = this.config('src'),
-			fileConfs = parseMd(src),
+			fileConfs,
 			components = [];
+
+		try {
+			fileConfs = parseMd(src);
+		}
+		catch (err) {
+			return cb(err);
+		}
 
 		cb = cb || function(){};
 

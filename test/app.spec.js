@@ -1,12 +1,18 @@
 /*global describe, it, expect, jasmine */
 
 var http = require('http');
+var net = require('net');
 var request = require('request');
 var allureApp = require('../src/app');
 
 describe('app', function() {
 
-	var mdpath = __dirname + '/fixture/**/*.md';
+	var mdpath = __dirname + '/fixture/*.md';
+
+	it('should expose the express app', function() {
+		var app = allureApp();
+		expect(app.express.toString()).toEqual('function app(req, res, next){ app.handle(req, res, next); }');
+	});
 
 	describe('.config', function() {
 		it('should set and get values', function() {
@@ -238,24 +244,24 @@ describe('app', function() {
 	});
 
 	describe('.listen', function() {
-		it('should return and start an express app', function(done) {
+		it('should start and return the server', function(done) {
 			var app = allureApp();
 			app.config('src', mdpath);
-			var express = app.listen(8000, function(err) {
+			var server = app.listen(8000, function(err) {
 				if (err) {
 					throw err;
 				}
-				app.server.close();
+				server.close();
 				done();
 			});
 
-			expect(express.toString()).toEqual('function app(req, res, next){ app.handle(req, res, next); }');
+			expect(server instanceof net.Server).toBe(true);
 		});
 		it('should add a route to "/" that responds with the interpolated template', function(done) {
 			var app = allureApp();
 			app.config('src', __dirname + '/fixture/basic.md');
 			app.config('template', '<p>{{ components[0].title }}</p>');
-			app.listen(8000, function(err) {
+			var server = app.listen(8000, function(err) {
 				if (err) {
 					throw err;
 				}
@@ -265,7 +271,7 @@ describe('app', function() {
 					}
 					expect(res.statusCode).toEqual(200);
 					expect(res.body).toEqual('<p>component</p>');
-					app.server.close();
+					server.close();
 					done();
 				});
 			});
@@ -278,7 +284,7 @@ describe('app', function() {
 			app.config('template', template);
 			app.config('renderer', renderer);
 			app.locals('test', 'test');
-			app.listen(8000, function(err) {
+			var server = app.listen(8000, function(err) {
 				if (err) {
 					throw err;
 				}
@@ -290,7 +296,7 @@ describe('app', function() {
 						template,
 						{ components: [{title: 'title', prop: 'val'}], test: 'test' }
 					);
-					app.server.close();
+					server.close();
 					done();
 				});
 			});
@@ -298,10 +304,11 @@ describe('app', function() {
 		it('should use the provided a server', function(done) {
 			var server = http.createServer();
 			var app = allureApp(server);
+			var returnedServer;
 
 			app.config('src', mdpath);
-			app.listen(8000, function() {
-				expect(server).toBe(app.server);
+			returnedServer = app.listen(8000, function() {
+				expect(server).toBe(returnedServer);
 				server.close();
 				done();
 			});
