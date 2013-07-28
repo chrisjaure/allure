@@ -7,6 +7,7 @@ Install the module with: `npm install allure`
 
 ```javascript
 var allure = require('allure');
+var app = allure().listen(8000);
 ```
 
 ## Documentation
