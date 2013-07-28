@@ -16,7 +16,7 @@ module.exports = function (grunt) {
         src: 'Gruntfile.js'
       },
       src: {
-        src: ['src/**/*.js']
+        src: ['src/**/*.js', '!src/public/prism.js']
       },
       test: {
         src: ['test/*.js']
