@@ -4,6 +4,54 @@
 	<title>Allure</title>
 </head>
 <body>
+	<h1>Allure Component Library</h1>
+	{% for component in components %}
+		<div id="{{ component.title }}-component" class="component">
 
+			<h3>
+				{{ component.title | title }}
+				{% if component.script or component.html %}
+					<a class="component-code-toggle">
+						<span class="icon blue-icon-circlePlus"></span>
+					</a>
+				{% endif %}
+			</h3>
+
+			{% if component.script or component.html %}
+			<a class="component-code-toggle">View Source</a>
+			<div class="component-code">
+
+				{% if component.script %}
+					{% for script in component.script %}
+						<p class="component-code-label">javascript</p>
+						<pre><code class="language-javascript">{{ script | escape }}</code></pre>
+					{% endfor %}
+				{% endif %}
+				{% if component.style %}
+					{% for style in component.style %}
+						<p class="component-code-label">css</p>
+						<pre><code class="language-scss">{{ style | escape }}</code></pre>
+					{% endfor %}
+				{% endif %}
+				{% if component.html %}
+					{% for markup in component.markup %}
+						<p class="component-code-label">html</p>
+						<pre><code class="language-markup">{{ markup | escape }}</code></pre>
+					{% endfor %}
+				{% endif %}
+			</div>
+			{% endif %}
+
+			<div class="component-example">
+				{% if component.script %}
+					<script type="text/javascript">
+						{{ component.script }}
+					</script>
+				{% endif %}
+				{{ component.markup }}
+			</div>
+
+		</div>
+	{% endfor %}
 </body>
 </html>

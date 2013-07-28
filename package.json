@@ -9,6 +9,9 @@
     "email": "chrisjaure@gmail.com",
     "url": "http://cleverchris.com"
   },
+  "bin": {
+    "allure": "./bin/allure"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/chrisjaure/allure"

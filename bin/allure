@@ -1,2 +1,15 @@
 #!/usr/bin/env node
-var argv = require('optimist').argv;
+var allure = require('../src');
+var argv = require('optimist')
+	.default('port', 8000)
+	.argv;
+
+var app = allure();
+
+if (argv.src) {
+	app.config('src', argv.src);
+}
+
+app.listen(argv.port, function() {
+	console.log('Listening on port %s', argv.port);
+});

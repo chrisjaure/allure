@@ -67,8 +67,8 @@ module.exports = function allure (server) {
 	};
 
 	this.getData = function(cb) {
-		var path = this.config('src'),
-			fileConfs = parseMd(path),
+		var src = this.config('src'),
+			fileConfs = parseMd(src),
 			globalConf = {
 				components: []
 			};
@@ -78,6 +78,7 @@ module.exports = function allure (server) {
 		this.config('assets').forEach(function(asset) {
 			app.use(asset.dest, express.static(asset.src));
 		});
+		app.use('/allure', express.static(path.join(__dirname, 'src', 'public')));
 
 		async.eachSeries(fileConfs, function(fileConf, done) {
 			applyPlugins(plugins, this, fileConf, globalConf, done);
@@ -88,7 +89,10 @@ module.exports = function allure (server) {
 
 	// defaults
 	this.config('src', path.join(process.cwd(), '**', '*.md'));
-	this.config('template', fs.readFileSync(path.join(__dirname, 'public', 'index.html')));
+	this.config(
+		'template',
+		fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8')
+	);
 	this.config('renderer', function renderTpl(template, data) {
 		if (!renderTpl.tpl) {
 			renderTpl.tpl = new nunjucks.Template(template);
