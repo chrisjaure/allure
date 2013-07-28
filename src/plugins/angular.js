@@ -1,18 +1,11 @@
-var dotty = require('dotty');
+var collect = require('./collect');
 
 module.exports = function(qualifier) {
 
 	qualifier = qualifier || 'angular';
 
-	return function angular(components) {
-		var modules = [];
-		components.forEach(function(conf) {
-			if (dotty.exists(conf, qualifier)) {
-				modules = modules.concat(dotty.get(conf, qualifier));
-			}
-		});
-
+	return collect(qualifier, function(modules) {
 		this.before('<script>angular.module("Allure", '+ JSON.stringify(modules) +');</script>');
-	};
+	});
 
 };
