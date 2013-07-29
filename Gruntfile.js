@@ -34,6 +34,16 @@ module.exports = function (grunt) {
       test: {
         files: '<%= jshint.test.src %>',
         tasks: ['jshint:test', 'jasmine_node']
+      },
+      dev: {
+        files: ['src/public/index.html', 'src/public/*.js', 'test/fixture/*.md'],
+        tasks: ['develop'],
+        options: { nospawn: true }
+      }
+    },
+    develop: {
+      server: {
+        file: 'test/server.js'
       }
     }
   });
@@ -42,8 +52,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.loadNpmTasks('grunt-develop');
 
   // Default task.
   grunt.registerTask('default', ['jshint', 'jasmine_node']);
+  grunt.registerTask('dev', ['develop', 'watch']);
 
 };

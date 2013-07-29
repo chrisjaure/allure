@@ -29,7 +29,8 @@
     "grunt-contrib-watch": "~0.5.0",
     "grunt-jasmine-node": "~0.1.0",
     "request": "~2.25.0",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "grunt-develop": "~0.1.1"
   },
   "dependencies": {
     "optimist": "~0.6.0",
