@@ -1,0 +1,44 @@
+.allure h1 {
+	font-family: Oxygen, sans-serif;
+	font-weight: normal;
+	font-size: 3em;
+}
+
+.allure-content {
+	width: 70%;
+	margin: 0 auto;
+}
+
+.allure-menu {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	overflow-y: auto;
+	width: 150px;
+	background: #333;
+	box-shadow: inset -10px 0 10px -5px rgba(0,0,0,0.4);
+}
+
+.allure-toc.pure-menu-open {
+	background: transparent;
+	border: 0;
+}
+.allure-toc .pure-menu-heading {
+	color: #fff;
+	border-bottom-color: #444;
+}
+.allure-toc a {
+	box-shadow: inset -10px 0 10px -5px rgba(0,0,0,0.2);
+}
+
+.allure-component a {
+	color: #226dd0;
+	cursor: pointer;
+}
+
+.allure-component-code {
+	display: none;
+	margin-bottom: 1em;
+	font-size: 0.8em;
+}

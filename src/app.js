@@ -117,8 +117,9 @@ module.exports = function allure (server) {
 		fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8')
 	);
 	this.config('renderer', function renderTpl(template, data) {
-		if (!renderTpl.tpl) {
+		if (!renderTpl.tpl || renderTpl.str !== template) {
 			renderTpl.tpl = new nunjucks.Template(template);
+			renderTpl.str = template;
 		}
 		return renderTpl.tpl.render(data);
 	});

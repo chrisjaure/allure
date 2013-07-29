@@ -1,8 +1,11 @@
 <!doctype html>
 <html>
 <head>
-	<title>Your UI Library by Allure</title>
+	<title>UI Library by Allure</title>
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.1/pure-min.css">
+	<link rel="stylesheet" href="/allure/styles.css">
 	<link rel="stylesheet" href="/allure/prism.css">
+	<link href="http://fonts.googleapis.com/css?family=Oxygen" rel="stylesheet" type="text/css">
 	{% if styles %}
 		<style>
 			{{ styles }}
@@ -12,60 +15,80 @@
 		{{ inject }}
 	{% endfor %}
 </head>
-<body>
-	<h1>Your UI Library by Allure</h1>
-	{% for component in components %}
-		<div id="{{ component.title }}-component" class="component">
+<body class="allure">
+	<div class="pure-g">
+		<div class="pure-u-1">
+			<div class="allure-content">
+				<h1>UI Library by Allure</h1>
+				{% for component in components %}
+					<div id="{{ component.title }}-component" class="allure-component">
 
-			<h3>
-				{{ component.title | title }}
-				{% if component.script or component.markup or component.style %}
-					<a class="component-code-toggle">
-						+
-					</a>
-				{% endif %}
-			</h3>
+						<h3>
+							{{ component.title | title }}
+							{% if component.script or component.markup or component.style %}
+								<a class="allure-component-code-toggle">
+									+
+								</a>
+							{% endif %}
+						</h3>
 
-			{% if component.script or component.markup or component.style %}
-			<div class="component-code">
+						{% if component.script or component.markup or component.style %}
+						<div class="allure-component-code">
 
-				{% if component.style %}
-					{% for style in component.style %}
-						<p class="component-code-label">css</p>
-						<pre><code class="language-scss">{{ style | escape }}</code></pre>
-					{% endfor %}
-				{% endif %}
-				{% if component.script %}
-					{% for script in component.script %}
-						<p class="component-code-label">javascript</p>
-						<pre><code class="language-javascript">{{ script | escape }}</code></pre>
-					{% endfor %}
-				{% endif %}
-				{% if component.markup %}
-					{% for markup in component.markup %}
-						<p class="component-code-label">html</p>
-						<pre><code class="language-markup">{{ markup | escape }}</code></pre>
-					{% endfor %}
-				{% endif %}
+							{% if component.style %}
+								{% for style in component.style %}
+									<p class="allure-component-code-label">css</p>
+									<pre><code class="language-scss">{{ style | escape }}</code></pre>
+								{% endfor %}
+							{% endif %}
+							{% if component.script %}
+								{% for script in component.script %}
+									<p class="allure-component-code-label">javascript</p>
+									<pre><code class="language-javascript">{{ script | escape }}</code></pre>
+								{% endfor %}
+							{% endif %}
+							{% if component.markup %}
+								{% for markup in component.markup %}
+									<p class="allure-component-code-label">html</p>
+									<pre><code class="language-markup">{{ markup | escape }}</code></pre>
+								{% endfor %}
+							{% endif %}
+						</div>
+						{% endif %}
+
+						<div class="allure-component-example">
+							{% if component.style %}
+								<style scoped>
+									{{ component.style }}
+								</style>
+							{% endif %}
+							{% if component.script %}
+								<script type="text/javascript">
+									{{ component.script }}
+								</script>
+							{% endif %}
+							{{ component.markup }}
+						</div>
+
+					</div>
+				{% endfor %}
 			</div>
-			{% endif %}
-
-			<div class="component-example">
-				{% if component.style %}
-					<style scoped>
-						{{ component.style }}
-					</style>
-				{% endif %}
-				{% if component.script %}
-					<script type="text/javascript">
-						{{ component.script }}
-					</script>
-				{% endif %}
-				{{ component.markup }}
-			</div>
-
 		</div>
-	{% endfor %}
+		<div class="allure-menu pure-u">
+			<div class="allure-toc pure-menu pure-menu-open">
+				<a href="#" class="pure-menu-heading">Components</a>
+				<ul>
+				{% for component in components %}
+					<li>
+						<a href="#{{ component.title }}-component">{{ component.title | title }}</a>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="/allure/scripts.js" type="text/javascript"></script>
 	<script src="/allure/prism.js" type="text/javascript"></script>
 	{% for inject in plugin.after %}
 		{{ inject }}
