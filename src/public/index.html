@@ -23,12 +23,10 @@
 				{% for component in components %}
 					<div id="{{ component.title }}-component" class="allure-component">
 
-						<h3>
+						<h3 class="allure-component-heading">
 							{{ component.title | title }}
 							{% if component.script or component.markup or component.style %}
-								<a class="allure-component-code-toggle">
-									+
-								</a>
+								<a class="allure-component-code-toggle pure-button pure-button-primary"></a>
 							{% endif %}
 						</h3>
 
@@ -38,19 +36,19 @@
 							{% if component.style %}
 								{% for style in component.style %}
 									<p class="allure-component-code-label">css</p>
-									<pre><code class="language-scss">{{ style | escape }}</code></pre>
+									<pre class="allure-component-code-block"><code class="language-scss">{{ style | escape }}</code></pre>
 								{% endfor %}
 							{% endif %}
 							{% if component.script %}
 								{% for script in component.script %}
 									<p class="allure-component-code-label">javascript</p>
-									<pre><code class="language-javascript">{{ script | escape }}</code></pre>
+									<pre class="allure-component-code-block"><code class="language-javascript">{{ script | escape }}</code></pre>
 								{% endfor %}
 							{% endif %}
 							{% if component.markup %}
 								{% for markup in component.markup %}
 									<p class="allure-component-code-label">html</p>
-									<pre><code class="language-markup">{{ markup | escape }}</code></pre>
+									<pre class="allure-component-code-block"><code class="language-markup">{{ markup | escape }}</code></pre>
 								{% endfor %}
 							{% endif %}
 						</div>

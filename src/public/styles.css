@@ -2,10 +2,15 @@
 	font-family: Oxygen, sans-serif;
 	font-weight: normal;
 	font-size: 3em;
+	margin: 0 0 40px;
+	padding: 40px 0;
+	text-align: center;
+	border-bottom: solid 1px #eee;
 }
 
 .allure-content {
-	width: 70%;
+	width: 60%;
+	padding-left: 150px;
 	margin: 0 auto;
 }
 
@@ -37,8 +42,47 @@
 	cursor: pointer;
 }
 
+.allure-component-heading {
+	position: relative;
+}
+
+.allure-component-code-toggle {
+	position: absolute;
+	left: -1.3em;
+	top: 0.1em;
+	width: 0.95em;
+	height: 0.95em;
+	border-radius: 50%;
+	padding: 0;
+}
+.allure-component-code-toggle::after,
+.allure-component-code-toggle:after {
+	content: '+';
+	color: #fff;
+	position: relative;
+	top: -0.25em;
+	font-size: 0.9em;
+}
+.allure-component-toggled .allure-component-code-toggle::after,
+.allure-component-toggled .allure-component-code-toggle:after {
+	content: '-';
+}
+
 .allure-component-code {
 	display: none;
-	margin-bottom: 1em;
+	position: relative;
+	top: -1em;
 	font-size: 0.8em;
+}
+.allure-component-toggled .allure-component-code {
+	display: block;
+}
+.allure-component-code-label {
+	text-transform: uppercase;
+	margin-bottom: 0;
+	font-size: 0.9em;
+	opacity: 0.75;
+}
+.allure-component .allure-component-code-block {
+	margin-top: 0;
 }
