@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         tasks: ['jshint:test', 'jasmine_node']
       },
       dev: {
-        files: ['src/public/index.html', 'src/public/*.js', 'test/fixture/*.md'],
+        files: ['src/public/index.html', 'src/*.js', 'src/plugins/*.js', 'test/fixture/*.md', 'test/server.js'],
         tasks: ['develop'],
         options: { nospawn: true }
       }
