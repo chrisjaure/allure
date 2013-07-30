@@ -5,11 +5,6 @@
 	<link rel="stylesheet" href="/allure/pure-min.css">
 	<link rel="stylesheet" href="/allure/styles.css">
 	<link rel="stylesheet" href="/allure/prism.css">
-	{% if styles %}
-		<style>
-			{{ styles }}
-		</style>
-	{% endif %}
 	{% for inject in plugin.before %}
 		{{ inject }}
 	{% endfor %}
