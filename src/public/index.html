@@ -24,42 +24,35 @@
 							{% endif %}
 						</h3>
 
-						{% if component.script or component.markup or component.style %}
 						<div class="allure-component-code">
-
-							{% if component.style %}
-								{% for style in component.style %}
-									<p class="allure-component-code-label">css</p>
-									<pre class="allure-component-code-block"><code class="language-scss">{{ style | escape }}</code></pre>
-								{% endfor %}
-							{% endif %}
-							{% if component.script %}
-								{% for script in component.script %}
-									<p class="allure-component-code-label">javascript</p>
-									<pre class="allure-component-code-block"><code class="language-javascript">{{ script | escape }}</code></pre>
-								{% endfor %}
-							{% endif %}
-							{% if component.markup %}
-								{% for markup in component.markup %}
-									<p class="allure-component-code-label">html</p>
-									<pre class="allure-component-code-block"><code class="language-markup">{{ markup | escape }}</code></pre>
-								{% endfor %}
-							{% endif %}
+							{% for style in component.style %}
+								<p class="allure-component-code-label">css</p>
+								<pre class="allure-component-code-block"><code class="language-scss">{{ style | escape }}</code></pre>
+							{% endfor %}
+							{% for script in component.script %}
+								<p class="allure-component-code-label">javascript</p>
+								<pre class="allure-component-code-block"><code class="language-javascript">{{ script | escape }}</code></pre>
+							{% endfor %}
+							{% for markup in component.markup %}
+								<p class="allure-component-code-label">html</p>
+								<pre class="allure-component-code-block"><code class="language-markup">{{ markup | escape }}</code></pre>
+							{% endfor %}
 						</div>
-						{% endif %}
 
 						<div class="allure-component-example">
-							{% if component.styleRaw %}
+							{% for styleRaw in component.styleRaw %}
 								<style scoped>
-									{{ component.styleRaw }}
+									{{ styleRaw }}
 								</style>
-							{% endif %}
-							{% if component.scriptRaw %}
+							{% endfor %}
+							{% for scriptRaw in component.scriptRaw %}
 								<script type="text/javascript">
-									{{ component.scriptRaw }}
+									{{ scriptRaw }}
 								</script>
-							{% endif %}
-							{{ component.markupRaw }}
+							{% endfor %}
+							{% for markupRaw in component.markupRaw %}
+								{{ markupRaw }}
+							{% endfor %}
 						</div>
 
 					</div>
