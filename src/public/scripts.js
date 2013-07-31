@@ -8,8 +8,10 @@
 	}
 
 	function addClick (component) {
-		component.addEventListener('click', function() {
-			component.classList.toggle('allure-component-toggled');
+		component.addEventListener('click', function(e) {
+			if (e.target.classList.contains('allure-component-code-toggle')) {
+				component.classList.toggle('allure-component-toggled');
+			}
 		}, false);
 	}
 
