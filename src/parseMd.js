@@ -30,6 +30,13 @@ module.exports = function parseMd (path) {
 
 		conf = conf[title];
 		conf.title = title;
+
+		// make separate raw properties for output
+		['markup', 'style', 'script'].forEach(function(prop) {
+			if (conf[prop]) {
+				conf[prop+'Raw'] = JSON.parse(JSON.stringify(conf[prop]));
+			}
+		});
 		fileConfs.push(conf);
 	});
 

@@ -49,17 +49,17 @@
 						{% endif %}
 
 						<div class="allure-component-example">
-							{% if component.style %}
+							{% if component.styleRaw %}
 								<style scoped>
-									{{ component.style }}
+									{{ component.styleRaw }}
 								</style>
 							{% endif %}
-							{% if component.script %}
+							{% if component.scriptRaw %}
 								<script type="text/javascript">
-									{{ component.script }}
+									{{ component.scriptRaw }}
 								</script>
 							{% endif %}
-							{{ component.markup }}
+							{{ component.markupRaw }}
 						</div>
 
 					</div>
